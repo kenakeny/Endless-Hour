@@ -25,7 +25,7 @@ public class Spikes : MonoBehaviour
             Debug.DrawRay(transform.position, Vector2.down * distance, Color.red);
             if (hit.transform != null)
             {
-                if (hit.transform.tag == "Player")
+                if (hit.transform.CompareTag("Player"))
                 {
                     rb.gravityScale =4.5f;
                     isFalling = true;
@@ -44,8 +44,9 @@ public class Spikes : MonoBehaviour
         }
         else
         {
+            // Landed on something other than the player: stop falling but stay armed-down
+            // (do NOT reset isFalling, or the spike would re-trigger and fall again).
             rb.gravityScale=0;
-            isFalling=false;
         }
     }
 }

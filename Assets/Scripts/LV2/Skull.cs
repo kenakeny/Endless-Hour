@@ -15,19 +15,13 @@ public class Skull : MonoBehaviour
 
 void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.tag=="Player"){
-            playerScript.TakeDamage(5);
+        if (other.CompareTag("Player")){
+            if (playerScript != null)
+                playerScript.TakeDamage(5);
         }
-        else if (other.tag=="ground")
+        else if (other.CompareTag("ground"))
         {
-Destroy(gameObject);
+            Destroy(gameObject);
         }
-
-
-    }
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

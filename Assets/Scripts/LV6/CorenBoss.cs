@@ -22,9 +22,13 @@ public class CorenBoss : MonoBehaviour
     public Rigidbody2D rb;
     public CorenStateMachine stateMachine;
     
-    // Prefab paths (load from Resources folder)
-    private string clockHandPrefabPath = "Assets/Prefabs/clocksweep"; // Adjust path as needed
-    private string auraBurstSpritesheetPath = "Sprites/AuraBurst"; // Adjust path as needed
+    // Phase 2 is a separate scene; set its build name here.
+    public string phase2SceneName = "LV6Scene2";
+
+    // Resources paths are relative to a folder literally named "Resources/" (no "Assets/" prefix).
+    // These are only used as a fallback if the prefab/sprites aren't already assigned on the Phase 2 state.
+    private string clockHandPrefabPath = "clocksweep";
+    private string auraBurstSpritesheetPath = "Sprites/AuraBurst";
     
     void Start()
     {
@@ -43,7 +47,8 @@ public class CorenBoss : MonoBehaviour
 
     void Update()
     {
-        stateMachine.Update();
+        if (stateMachine != null)
+            stateMachine.Tick();
     }
 
     // Phase 1 attacks
@@ -109,43 +114,39 @@ public class CorenBoss : MonoBehaviour
 
     private IEnumerator TransitionToPhase2()
     {
-        // Load Phase 2 scene
-        SceneManager.LoadScene(2); // Change to your Phase 2 scene index/name
+        // Load Phase 2 scene by name (was hard-coded index 2 = LV1Scene2, which sent the player back to Level 1).
+        SceneManager.LoadScene(phase2SceneName);
         yield return null;
-        
+
         // Wait one more frame for scene to fully load
         yield return null;
-        
-        // Load prefabs from Resources and pass to Phase 2
+
+        // Pass the Phase 2 assets. Prefer Inspector-assigned references; only fall back to
+        // Resources.Load (which needs the assets under a "Resources/" folder).
         if (stateMachine != null && stateMachine.phase2State != null)
         {
-            GameObject clockHand = Resources.Load<GameObject>(clockHandPrefabPath);
-            Sprite[] auraBurst = Resources.LoadAll<Sprite>(auraBurstSpritesheetPath);
-            
-            if (clockHand != null)
+            if (stateMachine.phase2State.clockHandPrefab == null)
             {
-                stateMachine.phase2State.clockHandPrefab = clockHand;
-                Debug.Log("Clock Hand Prefab loaded from Resources");
+                GameObject clockHand = Resources.Load<GameObject>(clockHandPrefabPath);
+                if (clockHand != null)
+                    stateMachine.phase2State.clockHandPrefab = clockHand;
+                else
+                    Debug.LogError($"Clock Hand prefab not assigned and not found in Resources/{clockHandPrefabPath}");
             }
-            else
+
+            if (stateMachine.phase2State.auraBurstSpritesheet == null || stateMachine.phase2State.auraBurstSpritesheet.Length == 0)
             {
-                Debug.LogError($"Could not load Clock Hand from {clockHandPrefabPath}");
+                Sprite[] auraBurst = Resources.LoadAll<Sprite>(auraBurstSpritesheetPath);
+                if (auraBurst.Length > 0)
+                    stateMachine.phase2State.auraBurstSpritesheet = auraBurst;
+                else
+                    Debug.LogError($"Aura Burst sprites not assigned and not found in Resources/{auraBurstSpritesheetPath}");
             }
-            
-            if (auraBurst.Length > 0)
-            {
-                stateMachine.phase2State.auraBurstSpritesheet = auraBurst;
-                Debug.Log("Aura Burst spritesheet loaded from Resources");
-            }
-            else
-            {
-                Debug.LogError($"Could not load Aura Burst sprites from {auraBurstSpritesheetPath}");
-            }
-            
+
             // Change to Phase 2 state
             stateMachine.ChangeState(stateMachine.phase2State);
         }
-        
+
         // Reset position
         transform.position = new Vector2(0, 0);
     }

@@ -32,7 +32,10 @@ public class CorenStateMachine : MonoBehaviour
             activeState.EnterState();
     }
 
-    public void Update()
+    // Renamed from Update() so Unity does NOT auto-call it as a lifecycle message.
+    // It is driven manually from CorenBoss.Update() — otherwise the state would
+    // tick twice per frame (attacks ran at 2x speed).
+    public void Tick()
     {
         if (activeState != null)
             activeState.UpdateState();

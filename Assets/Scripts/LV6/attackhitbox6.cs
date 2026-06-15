@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class attackhitbox6 : MonoBehaviour
 {
-    private Atreus6PlayerSuperclassa player;
+    private PlayerSuperclass player; // base type: works for any player (Atreus5 / Atreus6 / ...)
     private bool canDamage = false;
 
     void Start()
     {
-        player = GetComponentInParent<Atreus6PlayerSuperclassa>();
+        player = GetComponentInParent<PlayerSuperclass>();
     }
 
     void OnTriggerEnter2D(Collider2D collision)
@@ -24,7 +24,7 @@ public class attackhitbox6 : MonoBehaviour
 
     private void DealDamage(Collider2D collision)
     {
-        if (canDamage && collision.CompareTag("CorenEnemy"))
+        if (canDamage && player != null && collision.CompareTag("CorenEnemy"))
         {
             CorenBoss coren = collision.GetComponent<CorenBoss>();
             if (coren != null)

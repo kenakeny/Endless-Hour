@@ -4,19 +4,20 @@ using UnityEngine;
 
 public class ChronovarPhase1 : ChronovarState
 {
-    public int NumberOfAttacks = 3;
+    public int NumberOfAttacks = 2; // only cases 0 and 1 are implemented below
     private float attackCooldown = 1f;
     private float attackTimer = 0f;
 
     public override void EnterState()
     {
         Debug.Log("Entered Chronovar Phase 1");
-        attackTimer = attackCooldown;
         attackTimer = 0f;
     }
 
     public override void UpdateState()
     {
+        if (chronovar == null || chronovar.player == null) return;
+
         float dist = Vector2.Distance(chronovar.transform.position, chronovar.player.position);
 
         // Only move if NOT attacking AND beyond stopping distance

@@ -21,7 +21,7 @@ public class Chronovar : MonoBehaviour
     public bool isAttacking = false;
     public bool hasRecentlyTakenDamage = false;
     public float damageIntakeCooldown = 0.3f; // player can only hit every 0.3s
-    protected PlayerSuperclass playerController;
+    protected Atreus6PlayerSuperclassa playerController;
     public SpriteRenderer spriteRenderer;
     public bool phase3AttackStarted = false;
 
@@ -54,8 +54,19 @@ public class Chronovar : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         stateMachine = GetComponent<ChronovarStateMachine>();
-        playerController = player.GetComponent<PlayerSuperclass>();
+        if (player != null)
+            playerController = player.GetComponent<Atreus6PlayerSuperclassa>();
+        else
+            Debug.LogError("Chronovar: 'player' is not assigned in the Inspector.");
         spriteRenderer = GetComponent<SpriteRenderer>();
+    }
+
+    // Raycasts downward against groundLayer; keeps the isGrounded flag meaningful.
+    private bool CheckGrounded()
+    {
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, groundCheckDistance, groundLayer);
+        isGrounded = hit.collider != null;
+        return isGrounded;
     }
 
     void Update()
@@ -74,6 +85,11 @@ public class Chronovar : MonoBehaviour
         if (isAttacking)
         {
             rb.velocity = Vector2.zero;
+        }
+        else
+        {
+            // Re-arm contact damage between attacks so the dragon can hit more than once.
+            hasDealtDamage = false;
         }
     }
 
@@ -155,9 +171,11 @@ public class Chronovar : MonoBehaviour
         //  downward movement
         rb.velocity = Vector2.down * 12f;
 
-        // Wait until ground hit
-        while (!isGrounded)
+        // Wait until ground hit (with a safety timeout so the boss never freezes mid-land)
+        float landTimeout = 4f;
+        while (!CheckGrounded() && landTimeout > 0f)
         {
+            landTimeout -= Time.deltaTime;
             yield return null;
         }
 
@@ -207,9 +225,11 @@ public class Chronovar : MonoBehaviour
         // Hover above player
         Vector2 hoverPos = new Vector2(player.position.x, player.position.y + 2f); // tweak hover
         float hoverSpeed = 3f;
-        while ((Vector2)rb.position != hoverPos)
+        float hoverTimeout = 3f;
+        while (Vector2.Distance(rb.position, hoverPos) > 0.1f && hoverTimeout > 0f)
         {
             rb.MovePosition(Vector2.MoveTowards(rb.position, hoverPos, hoverSpeed * Time.fixedDeltaTime));
+            hoverTimeout -= Time.fixedDeltaTime;
             yield return new WaitForFixedUpdate();
         }
 
@@ -218,9 +238,11 @@ public class Chronovar : MonoBehaviour
         // Dive down
         Vector2 diveTarget = new Vector2(player.position.x, player.position.y); // dive target
         float diveSpeedLocal = 8f;
-        while ((Vector2)rb.position != diveTarget)
+        float diveTimeout = 3f;
+        while (Vector2.Distance(rb.position, diveTarget) > 0.1f && diveTimeout > 0f)
         {
             rb.MovePosition(Vector2.MoveTowards(rb.position, diveTarget, diveSpeedLocal * Time.fixedDeltaTime));
+            diveTimeout -= Time.fixedDeltaTime;
             yield return new WaitForFixedUpdate();
         }
 
@@ -348,19 +370,4 @@ public class Chronovar : MonoBehaviour
 
         isAttacking = false;
     }
-
-    /*TBD - > make it so that chronovar goes down,
-    dive bomb, 2 fire prefab -> one lava and one is breath along with lava ground,
-    fire done
-    linking animations is kinda done
-    divebomb 80% done
-    timer, loop
-    phase 3 uh
-
-    timer coroutine ->ez actually
-    link some animations,
- phase 1 finished
- phase 2 needs logic to go down
- phase 3 will just be a random check! MYFN3SH
-    */
 }

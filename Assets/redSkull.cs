@@ -4,21 +4,7 @@ using UnityEngine;
 
 public class redSkull : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
+    void OnTriggerEnter2D(Collider2D other){
+        if (other.CompareTag("Skull")) { Destroy(gameObject); }
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-
-void OnTriggerEnter2D(Collider2D other){       
-    if (other.tag=="Skull")  {Destroy(gameObject);
-    }
-}
 }

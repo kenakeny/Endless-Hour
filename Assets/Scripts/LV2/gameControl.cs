@@ -36,7 +36,8 @@ public class GameControl : MonoBehaviour
         foreach (Transform piece in pieces) //loop 3la kol peice f le array
         {
             //
-            if (piece.rotation.eulerAngles.z == 0)//Quaternion->rotaion data
+            // Use an angle tolerance instead of exact float equality (eulerAngles drift to 359.999/0.001)
+            if (Mathf.Abs(Mathf.DeltaAngle(piece.rotation.eulerAngles.z, 0f)) < 1f)//Quaternion->rotaion data
             {
                 correctPieces++;
             }
@@ -46,7 +47,7 @@ public class GameControl : MonoBehaviour
         {
             youWin = true;
             Debug.Log("YOU WIN!");
-            SceneManager.LoadScene(6);
+            SceneManager.LoadScene("LV2Scene1PLZWork"); // load by name (was hard-coded index 6)
 
             if (winText != null) // ui text connected 
             {

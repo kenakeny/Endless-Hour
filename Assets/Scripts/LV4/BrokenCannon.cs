@@ -17,12 +17,30 @@ public class BrokenCannon : MonoBehaviour, InterfaceInteractable
 
     public ParticleSystem smokeEffect;
     public float smokeDelay = 1f;
+    public float smokeDuration = 0.5f;
     public GameObject ObstacleToDisappear;
+
+    private InventoryManager inventory;
+
+    private void Start()
+    {
+        inventory = FindObjectOfType<InventoryManager>();
+    }
+
+    // Cached accessor: avoids a FindObjectOfType on every interaction-poll frame.
+    private InventoryManager Inventory
+    {
+        get
+        {
+            if (inventory == null) inventory = FindObjectOfType<InventoryManager>();
+            return inventory;
+        }
+    }
 
     // ---------------- INVENTORY CHECK ----------------
     private bool HasItem(Item item, int amount = 1)
     {
-        InventoryManager inv = FindObjectOfType<InventoryManager>();
+        InventoryManager inv = Inventory;
         if (inv == null) return false;
 
         int count = 0;
@@ -110,7 +128,7 @@ public class BrokenCannon : MonoBehaviour, InterfaceInteractable
     // ---------------- REMOVE ITEMS ----------------
     private void RemoveItem(Item item, int amount = 1)
     {
-        InventoryManager inv = FindObjectOfType<InventoryManager>();
+        InventoryManager inv = Inventory;
         if (inv == null) return;
 
         foreach (InventorySlot slot in inv.slots)
@@ -144,8 +162,8 @@ public class BrokenCannon : MonoBehaviour, InterfaceInteractable
         if (ObstacleToDisappear != null)
             ObstacleToDisappear.SetActive(false);
 
-        // Stop smoke after 2 seconds
-        yield return new WaitForSeconds(0.5f);
+        // Stop smoke after smokeDuration seconds
+        yield return new WaitForSeconds(smokeDuration);
         if (smokeEffect != null)
             smokeEffect.Stop();
     }

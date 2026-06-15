@@ -23,9 +23,12 @@ public class SandEnemy : MonoBehaviour
 
     void Update()
     {
-        Vector2 point = currentPoint.position - transform.position;
-        
-        rb.velocity = new Vector2(point.x, rb.velocity.y).normalized * speed;
+        Vector2 toPoint = (Vector2)currentPoint.position - (Vector2)transform.position;
+        Vector2 dir = toPoint.normalized;
+
+        // Normalize the direction first, then scale by speed so horizontal speed
+        // is constant regardless of current vertical velocity.
+        rb.velocity = new Vector2(dir.x * speed, rb.velocity.y);
         
         if (Vector2.Distance(transform.position, currentPoint.position) < 0.5f)
         {
@@ -55,7 +58,7 @@ private void Flip()
 }    
 private void OnCollisionEnter2D(Collision2D other){
 
-    if (other.gameObject.tag=="Player"){
+    if (other.gameObject.CompareTag("Player")){
         other.gameObject.GetComponent<PlayerSuperclass>().TakeDamage(AttackDamage);
 
     }

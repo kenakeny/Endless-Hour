@@ -17,20 +17,13 @@ public class woodenlogwithspikespawner : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
     }
 
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
     void Update()
     {
         rb.velocity = new Vector2(moveSpeed * moveDirection, rb.velocity.y);
     }
 
     void OnTriggerEnter2D(Collider2D other){
-        
-        if (other.tag=="Player"){
+        if (other.CompareTag("Player")){
             FindObjectOfType<PlayerSuperclass>().TakeDamage(damageAmount);
         }
     }

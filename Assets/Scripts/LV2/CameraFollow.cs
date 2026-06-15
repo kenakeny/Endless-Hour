@@ -1,6 +1,3 @@
-
-
-
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,8 +9,6 @@ public class CameraFollow : MonoBehaviour
     public float minX, maxX;
     public float minY, maxY;
 
-    void Start(){}
-    void Update(){}
     void FixedUpdate()
     {
         if(Target!=null)

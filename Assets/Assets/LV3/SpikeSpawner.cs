@@ -9,21 +9,10 @@ public class SpikeSpawner : MonoBehaviour
     public Transform spawnPoint;
 
     private bool hasSpawned = false;
-    //3shan yrun once per trigger only 
-
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    //3shan yrun once per trigger only
 
     void OnTriggerEnter2D(Collider2D other){
-        if (other.tag=="Player" && !hasSpawned){
+        if (other.CompareTag("Player") && !hasSpawned){
             Instantiate(spikeRollerPrefab, spawnPoint.position, spawnPoint.rotation);
             hasSpawned = true;
         }

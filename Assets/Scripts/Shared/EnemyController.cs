@@ -4,7 +4,6 @@ using UnityEngine;
 public class EnemyController : MonoBehaviour
 {
     public int maxHealth = 20;
-    //public GameObject deathEffect;
     private float currentHealth;
     public float moveSpeed = 3f;
 
@@ -13,8 +12,6 @@ public class EnemyController : MonoBehaviour
     public float detectionRange = 10f;
     public float attackRange = 2f;
     public float attackCooldown = 1f;
-    //public GameObject attackEffect;
-    //public Transform attackPoint;
     private float nextAttackTime = 0f;
 
     public Transform player;
@@ -24,8 +21,11 @@ public class EnemyController : MonoBehaviour
 
     private void Start()
     {
-        
-        //weaponHitbox = transform.Find("WeaponHitbox").GetComponent<Collider2D>();
+        // Null-safe lookup: only wire the hitbox if a "WeaponHitbox" child actually exists.
+        Transform hitboxTransform = transform.Find("WeaponHitbox");
+        if (hitboxTransform != null)
+            weaponHitbox = hitboxTransform.GetComponent<Collider2D>();
+
         if (weaponHitbox != null)
         {
             weaponHitbox.enabled = false;
@@ -37,6 +37,8 @@ public class EnemyController : MonoBehaviour
 
     private void Update()
     {
+        if (player == null) return;
+
         float distanceToPlayer = Vector2.Distance(transform.position, player.position);
 
         if (distanceToPlayer <= detectionRange)
@@ -79,17 +81,12 @@ public class EnemyController : MonoBehaviour
 
     public void Attack()
     {
-        // slash/whatever weapon effect
-        /*if (attackEffect != null && attackPoint != null)
-        {
-            Instantiate(attackEffect, attackPoint.position, attackPoint.rotation);
-        }*/
-
         // Make weapon hitbox active just for a bit so it doesnt keep hitting without attack
         if (weaponHitbox != null)
         {
             weaponHitbox.enabled = true;
-            Invoke("DisableWeaponHitbox", 0.5f);
+            CancelInvoke(nameof(DisableWeaponHitbox));
+            Invoke(nameof(DisableWeaponHitbox), 0.5f);
         }
     }
     private void DisableWeaponHitbox()
@@ -113,12 +110,6 @@ public class EnemyController : MonoBehaviour
     private void Die()
     {
         isDead = true;
-
-        //if (deathEffect != null)
-        //{
-        //    Instantiate(deathEffect, transform.position, transform.rotation);
-        //}
-
         rb.velocity = Vector2.zero;
         Destroy(gameObject, 0.1f);
     }

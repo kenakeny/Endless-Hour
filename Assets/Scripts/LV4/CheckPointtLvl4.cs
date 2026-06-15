@@ -4,23 +4,13 @@ using UnityEngine;
 
 public class CheckPointtLvl4 : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Player"))
         {
-FindObjectOfType<LevelManager>().SetCheckpoint(transform);
+            LevelManager levelManager = FindObjectOfType<LevelManager>();
+            if (levelManager != null)
+                levelManager.SetCheckpoint(transform);
         }
     }
 }

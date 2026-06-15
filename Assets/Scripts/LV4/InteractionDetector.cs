@@ -11,7 +11,8 @@ public class InteractionDetector : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        interactionIcon.SetActive(false);
+        if (interactionIcon != null)
+            interactionIcon.SetActive(false);
     }
 
     public void OnInteract(InputAction.CallbackContext context)
@@ -28,7 +29,8 @@ public class InteractionDetector : MonoBehaviour
         if (collision.TryGetComponent(out InterfaceInteractable interactable) && interactable.CanInteract())
         {
             interactableInRange = interactable;
-            interactionIcon.SetActive(true);
+            if (interactionIcon != null)
+                interactionIcon.SetActive(true);
         }
     }
 
@@ -37,7 +39,8 @@ public class InteractionDetector : MonoBehaviour
         if (collision.TryGetComponent(out InterfaceInteractable interactable) && interactable == interactableInRange)
         {
             interactableInRange = null;
-            interactionIcon.SetActive(false);
+            if (interactionIcon != null)
+                interactionIcon.SetActive(false);
         }
     }
 }

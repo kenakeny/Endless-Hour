@@ -24,11 +24,17 @@ public class SoldierAI : MonoBehaviour
     {
         anim = GetComponent<Animator>();
         currentHealth = maxHealth;
+
+        if (player == null)
+        {
+            GameObject found = GameObject.FindGameObjectWithTag("Player");
+            if (found != null) player = found.transform;
+        }
     }
 
     void Update()
     {
-        if (!isActivated || isDead) return;
+        if (!isActivated || isDead || player == null) return;
 
         float distance = Vector2.Distance(transform.position, player.position);
 

@@ -18,14 +18,4 @@ public class ChronovarPhase3 : ChronovarState
             StartCoroutine(chronovar.Phase3Attack1Routine());
         }
     }
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
 }

@@ -13,14 +13,7 @@ public class child1 : MonoBehaviour
     {
         r = GetComponent<Rigidbody2D>();
         a = GetComponent<Animator>();
-        sr = GetComponent<SpriteRenderer>(); 
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        sr = GetComponent<SpriteRenderer>();
     }
 
     void FixedUpdate(){
@@ -36,7 +29,7 @@ public class child1 : MonoBehaviour
     }
 
     void OnTriggerEnter2D(Collider2D other){
-        if (other.tag == "Wall"){
+        if (other.CompareTag("Wall")){
             Flip();
         }
     }
