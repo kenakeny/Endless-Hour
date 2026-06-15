@@ -1,3 +1,4 @@
+// ============ CorenPhase1.cs ============
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -17,25 +18,23 @@ public class CorenPhase1 : CorenState
 
     public override void EnterState()
     {
-        Debug.Log("Entered coren Phase 1");
+        Debug.Log("Entered Coren Phase 1");
         coren.anim.SetTrigger("Phase1");
         attackTimer = 0f;
     }
 
     public override void UpdateState()
     {
+        if (machine.activeState != this)
+            return;
+
         attackTimer += Time.deltaTime;
 
         if (attackTimer >= attackCooldown)
         {
-            HandleAttackLogic();
+            TimeReversal();
             attackTimer = 0f;
         }
-    }
-
-    private void HandleAttackLogic()
-    {
-        TimeReversal();
     }
 
     private void TimeReversal()
@@ -49,11 +48,14 @@ public class CorenPhase1 : CorenState
         Vector3 boxPos = coren.playerTransform.position;
         boxPos.y += 1f;
         GameObject box = Instantiate(timeReversalBoxPrefab, boxPos, Quaternion.identity);
-        box.transform.localScale = new Vector3(0.4f,0.4f,0.4f); // Match prefab scale
+        box.transform.localScale = new Vector3(0.4f, 0.4f, 0.4f);
 
         box.SetActive(true);
 
         yield return new WaitForSeconds(boxDuration);
+
+        if (box == null)
+            yield break;
 
         Collider2D[] hits = Physics2D.OverlapCircleAll(boxPos, boxRadius);
         foreach (Collider2D hit in hits)
@@ -68,6 +70,7 @@ public class CorenPhase1 : CorenState
             }
         }
 
-        Destroy(box);
+        if (box != null)
+            Destroy(box);
     }
 }

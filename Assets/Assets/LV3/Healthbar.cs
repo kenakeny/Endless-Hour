@@ -19,11 +19,11 @@ public class Healthbar : MonoBehaviour
     public Gradient colorgradientwowowoow;
     
 
-    PlayerSuperclass playerHealth;
+    Atreus6PlayerSuperclassa playerHealth;
 
     void Start()
     {
-        playerHealth = FindObjectOfType<PlayerSuperclass>();
+        playerHealth = FindObjectOfType<Atreus6PlayerSuperclassa>();
         float initialRatio = (float)playerHealth.health / playerHealth.maxHealth;
         this.targetFillAmount = initialRatio;
         this.currentFillAmount = initialRatio;

@@ -49,6 +49,7 @@ public class Atreus6PlayerSuperclassa : MonoBehaviour
         sr = GetComponent<SpriteRenderer>();
         rb = GetComponent<Rigidbody2D>();
         attackHitbox = GetComponentInChildren<attackhitbox6>();
+        DontDestroyOnLoad(gameObject); // Keep player across scenes
         // Get the attack hitbox component test if no work just comment all attachhitbox lines
     }
 
@@ -182,14 +183,14 @@ public class Atreus6PlayerSuperclassa : MonoBehaviour
         {
             health -= damage;
             health = Mathf.Clamp(health, 0f, maxHealth);
-            //   healthBarUI.updateHealthBar();
+            healthBarUI.updateHealthBar();
 
 
             if (health <= 0)
             {
                 FindObjectOfType<LevelManager>().RespawnPlayer();
                 health = maxHealth;
-                //                  healthBarUI.updateHealthBar();
+                healthBarUI.updateHealthBar();
 
             }
             //     Debug.Log("Player Health:" + health.ToString());
